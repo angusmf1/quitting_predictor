@@ -1,7 +1,11 @@
 import pandas as pd
 import numpy as np
 
+"""
+author: @Bill Tian
+upload data: Jun 28, 2023
 
+"""
 
 def seniority_checker(title_1, title_2 , duration_1, duration_2):
     '''Identity seniority and return a string'''
