@@ -11,13 +11,13 @@ import re
 import datetime
 
 
-q_df = pd.read_csv('Quitters_with_seniority.csv')
-nq_df = pd.read_csv('NonQuitters_with_seniority.csv')
+q_df = pd.read_csv('quitters_w_seniority.csv')
+nq_df = pd.read_csv('nonquitters_w_seniority.csv')
 
 
-columns_to_drop = ['Unnamed: 0.1', 'Unnamed: 0']
-q_df = q_df.drop(columns_to_drop, axis=1)
-nq_df = nq_df.drop(columns_to_drop, axis=1)
+#columns_to_drop = ['Unnamed: 0.1', 'Unnamed: 0']
+#q_df = q_df.drop(columns_to_drop, axis=1)
+#nq_df = nq_df.drop(columns_to_drop, axis=1)
 
 # Calculate total working experience in months
 q_df['total_experience'] = q_df[['time_duration_1', 'time_duration_2', 'time_duration_3', 'time_duration_4',
@@ -92,22 +92,32 @@ def check_exp(q_df):
         return q_df
 
 
+def calculate_avg_work_exp(df):
+    job_columns = ['time_duration_1', 'time_duration_2', 'time_duration_3', 'time_duration_4',
+                   'time_duration_5', 'time_duration_6', 'time_duration_7', 'time_duration_8',
+                   'time_duration_9', 'time_duration_10']
+    df['num_jobs'] = df[job_columns].apply(lambda row: row.notnull().sum(), axis=1)
+    df['avg_work_exp'] = df['total_experience'] / df['num_jobs']
+    return df
+
 q_df = check_exp(q_df)
 nq_df = check_exp(nq_df)
+q_df = calculate_avg_work_exp(q_df)
+nq_df = calculate_avg_work_exp(nq_df)
 
 
 print('# of Quitters failed check: ', sum(q_df['exp_check']==1))
 print('# of NonQuitters failed check: ', sum(nq_df['exp_check']==1))
 
-q_df = q_df.drop(['grad_year_1', 'grad_year_2', 'grad_year_3'], axis=1)
-nq_df = nq_df.drop(['grad_year_1', 'grad_year_2', 'grad_year_3'], axis=1)
+q_df = q_df.drop(['grad_year_1', 'grad_year_2', 'grad_year_3','num_jobs'], axis=1)
+nq_df = nq_df.drop(['grad_year_1', 'grad_year_2', 'grad_year_3','num_jobs'], axis=1)
 
 
 #write out files with 'total_experience and 'exp_check'
-quitters_out = 'Quitters_with_total_exp.csv'
+quitters_out = 'quitters_updated.csv'
 q_df.to_csv(quitters_out, index=False)
 
-nonquitters_out = 'NonQuitters_with_total_exp.csv'
+nonquitters_out = 'nonquitters_updated.csv'
 nq_df.to_csv(nonquitters_out, index=False)
 
 
