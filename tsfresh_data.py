@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 from tsfresh import extract_features
+from tsfresh import select_features
+from tsfresh.utilities.dataframe_functions import impute
 
 
 """
@@ -8,6 +10,24 @@ from tsfresh import extract_features
 df
 
 """
+"""time duration converted"""
+#df_train = pd.read_csv('ready_train_v2.csv')
+
+"""Original Dataset with time_duration as string"""
+#df_quit = pd.read_csv('Quitters.csv')
+#df_non = pd.read_csv('NonQuitters.csv')
+#df_orig = pd.concat([df_quit, df_non])
+#df_orig = df_orig.reset_index().drop(columns = ['index'])
+#df_orig['time_duration_1_int'] = df_train['time_duration_1']
+#df_orig['time_duration_2_int'] = df_train['time_duration_2']
+#df_orig['time_duration_3_int'] = df_train['time_duration_3']
+#df_orig['time_duration_4_int'] = df_train['time_duration_4']
+#df_orig['time_duration_5_int'] = df_train['time_duration_5']
+#df_orig['time_duration_6_int'] = df_train['time_duration_6']
+#df_orig['time_duration_7_int'] = df_train['time_duration_7']
+#df_orig['time_duration_8_int'] = df_train['time_duration_8']
+#df_orig['time_duration_9_int'] = df_train['time_duration_9']
+#df_orig['time_duration_10_int'] = df_train['time_duration_10']
 
 
 
@@ -50,7 +70,7 @@ def start_year(df):
     
     return df_name
 
-#df_test = start_year(df)
+#df_test = start_year(df_orig)
 
 
 def df_melt(df):
@@ -75,7 +95,7 @@ def df_melt(df):
     df_noint['time_duration_int'] = df_int['time_duration_int']
 
     # Drop rows with NaN in the time_duration column
-    df_noint = df_noint.dropna(subset=['time_duration'])
+    df_noint = df_noint.dropna(subset=['time_duration', 'time_duration_int'])
     
     # Sort by 'Name', 'first_job_start_year', and 'time_duration' to prepare for the time series data
     df_noint = df_noint.sort_values(by=['Name', 'first_job_start_year', 'time_duration'])
@@ -131,12 +151,29 @@ def calculate_time_since_first_job(row):
 
 ###""Change Column Names"""
 
-#df_ts = df_melted[['Name', 'time', 'time_duration_int']].rename(columns = {'Name':"id", 'time':'years since first job', 'time_duration_int':'work duration in months'})
+#df_ts = df_melted[['Name', 'time', 'time_duration_int']].rename(columns = {'Name':"id", 'time':'years since first job', 'time_duration_int':'work duration in years'})
 
 #df_ts.fillna({'years since first job':0, 'work duration in months': 0}, inplace=True)
 
+'''Noisy data change the index if you are using another dataset'''
+#np.where(df_melted['time'].isnull() == True)[0]
+#df_melted.iloc[[187088, 187089, 752967, 752968, 805440, 805441]]
+#df_melted.loc[187089, 'time'] = 7
+#df_melted.loc[752967, 'time'] = 7
+#df_melted.loc[752968, 'time'] = 7
+#df_melted.loc[805440, 'time'] = 0.17
+#df_melted.loc[805441, 'time'] = 0.33
 
+'''Convert to years'''
+#df_ts['work duration in years'] = df_ts['work duration in years'] / 12
 
 """Run tsfresh"""
 
 #extracted_features = extract_features(df_ts, column_id="id", column_sort="years since first job")
+
+#y = df_train['Quitter']
+#new_y = y.iloc[extracted_features.index]
+#impute(extracted_features)
+#features_filtered = select_features(extracted_features, new_y)
+
+
