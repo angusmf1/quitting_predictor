@@ -62,10 +62,10 @@ def update_quitting_bucket(year, df):
                 start = item.split('-')[0]
                 end = item.split('-')[1]
             
-                end_year = end.split()[1]
-                end_month = end.split()[0]
-                if end_year == year:
-                    if end_month == 'Jan' or end_month == 'Feb' or end_month == 'Mar' or end_month == 'Apr' or end_month == 'May' or end_month == 'Jun':
+                start_year = end.split()[1]
+                start_month = end.split()[0]
+                if start_year == year:
+                    if start_month == 'Jan' or start_month == 'Feb' or start_month == 'Mar' or start_month == 'Apr' or start_month == 'May' or start_month == 'Jun':
                         quitting_buckets[year + '-Jan-June'] += 1
                         
                     else:
